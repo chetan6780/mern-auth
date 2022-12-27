@@ -1,0 +1,22 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+.btn{
+    background-color: #0074d9;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    width: fit-content;
+    padding: 10px;
+    outline: none;
+    text-align: center;
+}
+
+.btn:hover{
+    background-color: #005b9f;
+}
