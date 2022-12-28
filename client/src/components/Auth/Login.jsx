@@ -26,7 +26,7 @@ const Login = () => {
         const body = JSON.stringify({ email, password });
 
         try {
-            const res = await axios.post('/api/auth', body, config);
+            const res = await axios.post('http://localhost:3001/login', body, config);
             console.log(res.data);
         } catch (err) {
             console.error(err.response.data);

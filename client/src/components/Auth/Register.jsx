@@ -20,7 +20,7 @@ const Register = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            console.log('Passwords do not match');
+            alert('Passwords do not match');
         } else {
             const newUser = {
                 name,
@@ -37,7 +37,7 @@ const Register = () => {
 
                 const body = JSON.stringify(newUser);
 
-                const res = await axios.post('/api/users', body, config);
+                const res = await axios.post('http://localhost:3001/register', body, config);
                 console.log(res.data);
             } catch (err) {
                 console.error(err.response.data);
