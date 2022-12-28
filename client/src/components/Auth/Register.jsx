@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Auth.css';
+import { useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Register = (loginUser) => {
+    console.log(loginUser);
+    const navigate = useNavigate();
+    const isUserLoggedIn = loginUser.user._id ? true : false;
     const [user, setUser] = useState({
-        name: '',
-        email: '',
+        name: loginUser.user.name || '',
+        email: loginUser.user.email || '',
         password: '',
         confirmPassword: ''
     });
@@ -39,17 +43,49 @@ const Register = () => {
 
                 const res = await axios.post('http://localhost:3001/register', body, config);
                 console.log(res.data);
+                navigate('/');
             } catch (err) {
                 console.error(err.response.data);
             }
         }
     };
 
+    const onEdit = async e => {
+        e.preventDefault();
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        // Retrieve the updated user data from the form
+        const { name, email, password } = user;
+        const loggedUserEmail = loginUser.user.email;
+        console.log("mera user edit pe", user)
+
+        // Create the request body
+        const body = JSON.stringify({ name, email, password,loggedUserEmail });
+
+        try {
+            // Send the "put" request to the server
+            const res = await axios.put('http://localhost:3001/edit', body, config);
+            console.log('User updated successfully', res.data);
+            navigate('/login');
+        } catch (err) {
+            alert("Incorrect Password")
+        }
+    };
+
+
     return (
         <div className='container'>
-            <h1 className='large'>Sign Up</h1>
-            <p>Create Your Account </p>
-            <form className='form' onSubmit={e => onSubmit(e)}>
+            <h1 className='large'>
+                {isUserLoggedIn ? "Edit" : "Register"}
+            </h1>
+            <p> {isUserLoggedIn ? "Edit your information" : "Create Your Account"}  </p>
+            <form className='form' onSubmit={e => {
+                isUserLoggedIn ? onEdit(e) : onSubmit(e);
+            }}>
                 <input
                     type='text'
                     placeholder='Name'
@@ -73,19 +109,21 @@ const Register = () => {
                     value={password}
                     onChange={e => onChange(e)}
                     minLength='6'
+                    required
                 />
-                <input
-                    type='password'
-                    placeholder='Confirm Password'
-                    name='confirmPassword'
-                    value={confirmPassword}
-                    onChange={e => onChange(e)}
-                    minLength='6'
-                />
-                <input type='submit' className='btn' value='Register' />
+                {isUserLoggedIn ? null :
+                    <input
+                        type='password'
+                        placeholder='Confirm Password'
+                        name='confirmPassword'
+                        value={confirmPassword}
+                        onChange={e => onChange(e)}
+                        minLength='6'
+                    />
+                }
+                <input type='submit' className='btn' value={isUserLoggedIn ? 'Save Changes' : 'Register'} />
             </form>
-
-            <p > Already have an account? <a href='/login'>Sign In</a> </p>
+            {isUserLoggedIn ? null : <p > Already have an account? <a href='/login'>Sign In</a> </p>}
         </div>
     )
 };

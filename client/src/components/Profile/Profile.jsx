@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import './Profile.css'
+import { Link } from 'react-router-dom';
 
-const Profile = ({ name, email }) => {
+const Profile = ({user}) => {
+    console.log("user", user)
     return (
         <div className='container'>
             <h1 className='large'> Profile</h1>
             <p> Your Profile </p>
-            <p>Name: {name}</p>
-            <p>Email: {email}</p>
-            <a href="/" className='btn'>Edit</a>
+            <p>Name: {user.name}</p>
+            <p>Email: {user.email}</p>
+            <Link to="/register" className='btn'>Edit</Link>
         </div>
     );
 };
