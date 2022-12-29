@@ -1,14 +1,12 @@
-import React from 'react'
-import './Auth.css'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import './Auth.css'
 
 const Logout = ({ setLoginUser }) => {
     // logout
     const logout = async () => {
-        localStorage.removeItem('token');
-        const res = await axios.post('http://localhost:3001/logout');
+        const res = await axios.post('http://localhost:3001/api/logout');
         setLoginUser({});
     }
     useEffect(() => {

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
-import { useNavigate } from 'react-router-dom';
 
 const Register = (loginUser) => {
     const navigate = useNavigate();
@@ -27,8 +27,6 @@ const Register = (loginUser) => {
         if (!passwordRegex.test(password)) {
             alert('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number');
         } else {
-
-
             if (password !== confirmPassword) {
                 alert('Passwords do not match');
             } else {
@@ -47,10 +45,11 @@ const Register = (loginUser) => {
 
                     const body = JSON.stringify(newUser);
 
-                    const res = await axios.post('http://localhost:3001/register', body, config);
+                    const res = await axios.post('http://localhost:3001/api/register', body, config);
                     navigate('/');
                 } catch (err) {
-                    console.error(err.response.data);
+                    alert(err.response.data.message)
+                    console.error("Something went wrong", err.response.data.message);
                 }
             }
         }
@@ -72,19 +71,17 @@ const Register = (loginUser) => {
                     }
                 };
 
-                // Retrieve the updated user data from the form
                 const { name, email, password } = user;
                 const loggedUserEmail = loginUser.user.email;
-
-                // Create the request body
                 const body = JSON.stringify({ name, email, password, loggedUserEmail });
 
                 try {
-                    // Send the "put" request to the server
-                    const res = await axios.put('http://localhost:3001/edit', body, config);
+                    const res = await axios.put('http://localhost:3001/api/edit', body, config);
                     navigate('/login');
                 } catch (err) {
-                    alert("Incorrect Password")
+                    console.log(err)
+                    const errMessage = err.response.data.message || 'Something went wrong';
+                    alert(errMessage);
                 }
             }
         }
@@ -122,7 +119,6 @@ const Register = (loginUser) => {
                     name='password'
                     value={password}
                     onChange={e => onChange(e)}
-                    minLength='6'
                     required
                 />
                 <input
@@ -131,11 +127,10 @@ const Register = (loginUser) => {
                     name='confirmPassword'
                     value={confirmPassword}
                     onChange={e => onChange(e)}
-                    minLength='6'
                 />
                 <input type='submit' className='btn' value={isUserLoggedIn ? 'Save Changes' : 'Register'} />
             </form>
-            {isUserLoggedIn ? null : <p > Already have an account? <a href='/login'>Sign In</a> </p>}
+            {isUserLoggedIn ? null : <p > Already have an account? <Link to='/login'>Sign In</Link> </p>}
         </div>
     )
 };
