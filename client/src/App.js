@@ -10,7 +10,7 @@ const App = () => {
   const [loginUser, setLoginUser] = useState({});
   return (
     <div>
-      <Router basename='/'>
+      <Router>
         <Routes>
           <Route path='/' element={
             // if user is logged in, show profile page else show login page
