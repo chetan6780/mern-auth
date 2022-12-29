@@ -4,7 +4,6 @@ import './Auth.css';
 import { useNavigate } from 'react-router-dom';
 
 const Register = (loginUser) => {
-    console.log(loginUser);
     const navigate = useNavigate();
     const isUserLoggedIn = loginUser.user._id ? true : false;
     const [user, setUser] = useState({
@@ -23,56 +22,71 @@ const Register = (loginUser) => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
+        // check password with regex
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            alert('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number');
         } else {
-            const newUser = {
-                name,
-                email,
-                password
-            };
 
-            try {
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+            } else {
+                const newUser = {
+                    name,
+                    email,
+                    password
                 };
 
-                const body = JSON.stringify(newUser);
+                try {
+                    const config = {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
 
-                const res = await axios.post('http://localhost:3001/register', body, config);
-                console.log(res.data);
-                navigate('/');
-            } catch (err) {
-                console.error(err.response.data);
+                    const body = JSON.stringify(newUser);
+
+                    const res = await axios.post('http://localhost:3001/register', body, config);
+                    navigate('/');
+                } catch (err) {
+                    console.error(err.response.data);
+                }
             }
         }
     };
 
     const onEdit = async e => {
         e.preventDefault();
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
+        // check password with regex
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            alert('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number');
+        } else {
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+            } else {
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                // Retrieve the updated user data from the form
+                const { name, email, password } = user;
+                const loggedUserEmail = loginUser.user.email;
+
+                // Create the request body
+                const body = JSON.stringify({ name, email, password, loggedUserEmail });
+
+                try {
+                    // Send the "put" request to the server
+                    const res = await axios.put('http://localhost:3001/edit', body, config);
+                    navigate('/login');
+                } catch (err) {
+                    alert("Incorrect Password")
+                }
             }
-        };
-
-        // Retrieve the updated user data from the form
-        const { name, email, password } = user;
-        const loggedUserEmail = loginUser.user.email;
-        console.log("mera user edit pe", user)
-
-        // Create the request body
-        const body = JSON.stringify({ name, email, password,loggedUserEmail });
-
-        try {
-            // Send the "put" request to the server
-            const res = await axios.put('http://localhost:3001/edit', body, config);
-            console.log('User updated successfully', res.data);
-            navigate('/login');
-        } catch (err) {
-            alert("Incorrect Password")
         }
     };
 
@@ -111,16 +125,14 @@ const Register = (loginUser) => {
                     minLength='6'
                     required
                 />
-                {isUserLoggedIn ? null :
-                    <input
-                        type='password'
-                        placeholder='Confirm Password'
-                        name='confirmPassword'
-                        value={confirmPassword}
-                        onChange={e => onChange(e)}
-                        minLength='6'
-                    />
-                }
+                <input
+                    type='password'
+                    placeholder='Confirm Password'
+                    name='confirmPassword'
+                    value={confirmPassword}
+                    onChange={e => onChange(e)}
+                    minLength='6'
+                />
                 <input type='submit' className='btn' value={isUserLoggedIn ? 'Save Changes' : 'Register'} />
             </form>
             {isUserLoggedIn ? null : <p > Already have an account? <a href='/login'>Sign In</a> </p>}

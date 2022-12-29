@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom"
 
 const Login = ({ setLoginUser }) => {
     const navigate = useNavigate();
+    // if token present in local storage, redirect to profile page
+    
     const [user, setUser] = useState({
         email: '',
         password: ''
@@ -30,7 +32,6 @@ const Login = ({ setLoginUser }) => {
 
         try {
             const res = await axios.post('http://localhost:3001/login', body, config);
-            console.log("logged in", res.data)
             setLoginUser(res.data.user);
             navigate('/');
         } catch (err) {
